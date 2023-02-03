@@ -13,6 +13,8 @@ import ResizablePanel from "../components/ResizablePanel";
 
 const Home: NextPage = () => {
   const [loading, setLoading] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [fileReady, setFileReady] = useState(false);
   const [bio, setBio] = useState("");
   const [vibe, setVibe] = useState<VibeType>("Professional");
   const [generatedBios, setGeneratedBios] = useState<String>("");
@@ -65,30 +67,50 @@ const Home: NextPage = () => {
     }
 
     setLoading(false);
+
+
   };
+  const dragOver = () => setDragging(true);
+  const dragLeave = () => setDragging(false);
+
+
+  function readURL(input: any) {
+    if (input.files && input.files[0]) {
+  
+      var reader = new FileReader();
+  
+      reader.onload = function(e) {
+        setFileReady(true)
+      };
+  
+      reader.readAsDataURL(input.files[0]);
+  
+    } else {
+      removeUpload();
+    }
+  }
+
+  function removeUpload() {
+    document.querySelector('.file-upload-input').replaceWith(document.querySelector('.file-upload-input').clone());
+    document.querySelector('.file-upload-content').hide();
+    document.querySelector('.image-upload-wrap').show();
+  }
+  
 
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
       <Head>
-        <title>Twitter Generator</title>
+        <title>Journal Generator</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Header />
-      <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-12 sm:mt-20">
-        <a
-          className="flex max-w-fit items-center justify-center space-x-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-600 shadow-md transition-colors hover:bg-gray-100 mb-5"
-          href="https://github.com/Nutlope/twitterbio"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Github />
-          <p>Star on GitHub</p>
-        </a>
-        <h1 className="sm:text-6xl text-4xl max-w-2xl font-bold text-slate-900">
-          Generate your next Twitter bio in seconds
+      <main className="flex flex-1 w-full flex-col shadow-2xl items-center justify-center text-center px-4 mt-12">
+        
+        <h1 className="mt-10 sm:text-6xl text-4xl max-w-2xl font-bold text-slate-900">
+          Generate a journal entry of your week in seconds
         </h1>
-        <p className="text-slate-500 mt-5">18,167 bios generated so far.</p>
+        
         <div className="max-w-xl w-full">
           <div className="flex mt-10 items-center space-x-3">
             <Image
@@ -99,13 +121,31 @@ const Home: NextPage = () => {
               className="mb-5 sm:mb-0"
             />
             <p className="text-left font-medium">
-              Copy your current bio{" "}
+              Upload your week from your calendar{" "}
               <span className="text-slate-500">
                 (or write a few sentences about yourself)
               </span>
               .
             </p>
           </div>
+
+          <Image
+              src="/export-calendar.png"
+              width={400}
+              height={30}
+              alt="1 icon"
+              className="shadow-lg mt-5 m-auto"
+            />
+
+          <div className={(dragging ? 'image-dropping' : '') + ' image-upload-wrap'} onDragOver={dragOver} onDragLeave={dragLeave}>
+            <input className="file-upload-input" type='file' 
+            onChange={(e) => readURL(e)}
+            accept="ics/*" />
+            <div className="drag-text">
+              <h3>Drop or select a .ics file</h3>
+            </div>
+          </div>
+
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
