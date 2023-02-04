@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import type { NextPage } from "next";
+import ICAL from "ical.js";
 import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
@@ -15,20 +16,13 @@ const Home: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [fileReady, setFileReady] = useState(false);
+  const [fileContent, setFileContent] = useState(false);
   const [bio, setBio] = useState("");
   const [vibe, setVibe] = useState<VibeType>("Professional");
   const [generatedBios, setGeneratedBios] = useState<String>("");
 
   console.log("Streamed response: ", generatedBios);
 
-  const prompt =
-    vibe === "Funny"
-      ? `Generate 2 funny twitter bios with no hashtags and clearly labeled "1." and "2.". Make sure there is a joke in there and it's a little ridiculous. Make sure each generated bio is at max 20 words and base it on this context: ${bio}${
-          bio.slice(-1) === "." ? "" : "."
-        }`
-      : `Generate 2 ${vibe} twitter bios with no hashtags and clearly labeled "1." and "2.". Make sure each generated bio is at least 14 words and at max 20 words and base them on this context: ${bio}${
-          bio.slice(-1) === "." ? "" : "."
-        }`;
 
   const generateBio = async (e: any) => {
     e.preventDefault();
@@ -74,28 +68,67 @@ const Home: NextPage = () => {
   const dragLeave = () => setDragging(false);
 
 
+
+  let prevMonday = new Date();
+  prevMonday.setDate(prevMonday.getDate() - 7);
+  prevMonday.setDate(prevMonday.getDate() - (prevMonday.getDay() + 6) % 7);
+  
+  let prevSunday = new Date()
+  prevSunday.setDate(prevSunday.getDate() - 7);
+  prevSunday.setDate(prevSunday.getDate() + 1);
+
   function readURL(input: any) {
+    console.log('onreadurl', input)
     if (input.files && input.files[0]) {
   
       var reader = new FileReader();
-  
       reader.onload = function(e) {
+        console.log(ICAL)
+        let jcalData = ICAL.parse(reader.result);
+        console.log(jcalData)
+        let output = ''
+        let events = []
+        try {
+          
+        } catch(err) {
+          output = 'invalid file format'
+        }
+        setBio(output)
+        let series = jcalData[2].filter((item: any) => {
+          console.log(item)
+          if (item[0] != 'vevent') return false
+          for(let i in item[1]) {
+            if(item[1][i][0] == 'dtstart'){
+              let eventStart = new Date(item[1][i][3])
+              return eventStart.getTime() >= prevMonday.getTime() &&
+              eventStart.getTime() <= prevSunday.getTime();
+            }
+          }
+          return true
+        });
+        console.log(series, 'series')
+        let text = ''
+        series.forEach((element: Array<any>) => {
+          for(let i in element[1]) {
+            if(element[1][i][0] == 'summary'){
+              text += '"' + element[1][i][3] + '" at '
+            }
+            if(element[1][i][0] == 'dtstart'){
+              text += (new Date(element[1][i][3])).toLocaleString('en-US')
+            }
+          }
+          text += "\n\r"
+          // ... at ... together with ...
+
+        });
+        setBio(text)
         setFileReady(true)
       };
   
-      reader.readAsDataURL(input.files[0]);
-  
-    } else {
-      removeUpload();
+      reader.readAsText(input.files[0]);
+
     }
   }
-
-  function removeUpload() {
-    document.querySelector('.file-upload-input').replaceWith(document.querySelector('.file-upload-input').clone());
-    document.querySelector('.file-upload-content').hide();
-    document.querySelector('.image-upload-wrap').show();
-  }
-  
 
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
@@ -139,8 +172,8 @@ const Home: NextPage = () => {
 
           <div className={(dragging ? 'image-dropping' : '') + ' image-upload-wrap'} onDragOver={dragOver} onDragLeave={dragLeave}>
             <input className="file-upload-input" type='file' 
-            onChange={(e) => readURL(e)}
-            accept="ics/*" />
+            onChange={(e) => readURL(e.target)}
+            accept="text/calendar" />
             <div className="drag-text">
               <h3>Drop or select a .ics file</h3>
             </div>
