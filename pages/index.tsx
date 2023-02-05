@@ -161,10 +161,6 @@ const Home: NextPage = () => {
             />
             <p className="text-left font-medium">
               Upload your week from your calendar{" "}
-              <span className="text-slate-500">
-                (or write down your activities)
-              </span>
-              .
             </p>
           </div>
 
@@ -185,15 +181,6 @@ const Home: NextPage = () => {
             </div>
           </div>
 
-          <textarea
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            rows={4}
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black my-5"
-            placeholder={
-              'e.g. \n - "TC2 - Tech Challenge - Presentation" on Thursday at Antler \n - "Idea Validation Toolkit" around 1/26/2023, 11:45:00 AM'
-            }
-          />
           <div className="flex mb-5 items-center space-x-3">
             <Image src="/2-black.png" width={30} height={30} alt="1 icon" />
             <p className="text-left font-medium">Select how you felt that week.</p>
