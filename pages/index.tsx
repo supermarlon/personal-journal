@@ -18,12 +18,11 @@ const Home: NextPage = () => {
   const [fileReady, setFileReady] = useState(false);
   const [fileContent, setFileContent] = useState(false);
   const [bio, setBio] = useState("");
-  const [vibe, setVibe] = useState<VibeType>("Professional");
+  const [vibe, setVibe] = useState<VibeType>("Happy");
   const [generatedBios, setGeneratedBios] = useState<String>("");
 
-  console.log("Streamed response: ", generatedBios);
-
-
+  const prompt = "Write a personal journal entry of the week in a " + vibe + " manor where these events happend: " + bio
+  
   const generateBio = async (e: any) => {
     e.preventDefault();
     setGeneratedBios("");
@@ -68,7 +67,6 @@ const Home: NextPage = () => {
   const dragLeave = () => setDragging(false);
 
 
-
   let prevMonday = new Date();
   prevMonday.setDate(prevMonday.getDate() - 7);
   prevMonday.setDate(prevMonday.getDate() - (prevMonday.getDay() + 6) % 7);
@@ -78,14 +76,11 @@ const Home: NextPage = () => {
   prevSunday.setDate(prevSunday.getDate() + 1);
 
   function readURL(input: any) {
-    console.log('onreadurl', input)
     if (input.files && input.files[0]) {
   
       var reader = new FileReader();
       reader.onload = function(e) {
-        console.log(ICAL)
         let jcalData = ICAL.parse(reader.result);
-        console.log(jcalData)
         let output = ''
         let events = []
         try {
@@ -95,7 +90,6 @@ const Home: NextPage = () => {
         }
         setBio(output)
         let series = jcalData[2].filter((item: any) => {
-          console.log(item)
           if (item[0] != 'vevent') return false
           for(let i in item[1]) {
             if(item[1][i][0] == 'dtstart'){
@@ -106,19 +100,31 @@ const Home: NextPage = () => {
           }
           return true
         });
-        console.log(series, 'series')
         let text = ''
         series.forEach((element: Array<any>) => {
+          let summary = '';
+          let start = '';
+          let location = '';
           for(let i in element[1]) {
             if(element[1][i][0] == 'summary'){
-              text += '"' + element[1][i][3] + '" at '
+              summary = element[1][i][3]
             }
             if(element[1][i][0] == 'dtstart'){
-              text += (new Date(element[1][i][3])).toLocaleString('en-US')
+              start = (new Date(element[1][i][3])).toLocaleString('en-US')
             }
+            if(element[1][i][0] == 'location'){
+              location = element[1][i][3]
+            }
+            // if you got location, add weather
+            // add your mood (if you want)
+            // add with whom you were at the event like "... at ... together with ..."
           }
-          text += "\n\r"
-          // ... at ... together with ...
+          if(summary) {
+            text += "\n"
+            text += '- "' + summary + '"';
+            if (start) text += ' around ' + start
+            if (location) text += ' at ' + location
+          }
 
         });
         setBio(text)
@@ -155,10 +161,6 @@ const Home: NextPage = () => {
             />
             <p className="text-left font-medium">
               Upload your week from your calendar{" "}
-              <span className="text-slate-500">
-                (or write a few sentences about yourself)
-              </span>
-              .
             </p>
           </div>
 
@@ -190,7 +192,7 @@ const Home: NextPage = () => {
           />
           <div className="flex mb-5 items-center space-x-3">
             <Image src="/2-black.png" width={30} height={30} alt="1 icon" />
-            <p className="text-left font-medium">Select your vibe.</p>
+            <p className="text-left font-medium">Select how you felt that week.</p>
           </div>
           <div className="block">
             <DropDown vibe={vibe} setVibe={(newVibe) => setVibe(newVibe)} />
