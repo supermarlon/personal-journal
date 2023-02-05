@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   const [vibe, setVibe] = useState<VibeType>("Happy");
   const [generatedBios, setGeneratedBios] = useState<String>("");
 
-  const prompt = "Write a personal journal entry of the week in a " + vibe + " manor where these events happend: " + bio
+  const prompt = "Write a personal journal entry without the exact dates and times of the week in a " + vibe + " manor where these events happend: " + bio
   
   const generateBio = async (e: any) => {
     e.preventDefault();
