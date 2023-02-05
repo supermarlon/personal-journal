@@ -127,6 +127,7 @@ const Home: NextPage = () => {
           }
 
         });
+        console.log("fileready")
         setBio(text)
         setFileReady(true)
       };
@@ -172,12 +173,17 @@ const Home: NextPage = () => {
               className="shadow-lg mt-5 m-auto"
             />
 
-          <div className={(dragging ? 'image-dropping' : '') + ' image-upload-wrap'} onDragOver={dragOver} onDragLeave={dragLeave}>
+          <div className={(dragging ? 'image-dropping' : '') + (fileReady ? ' hidden' : '') + ' image-upload-wrap'} onDragOver={dragOver} onDragLeave={dragLeave}>
             <input className="file-upload-input" type='file' 
             onChange={(e) => readURL(e.target)}
             accept="text/calendar" />
             <div className="drag-text">
               <h3>Drop or select a .ics file</h3>
+            </div>
+          </div>
+          <div className={(!fileReady ? 'hidden' : '') + ' success-parse-wrap'}>
+          <div className="drag-text">
+              <h3>Parsing successful ☑️</h3>
             </div>
           </div>
 

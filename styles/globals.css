@@ -69,7 +69,14 @@ body {
     opacity: 0;
     cursor: pointer;
   }
-  
+  .success-parse-wrap {
+    margin-top: 20px;
+    border: 3px dashed #fff;
+    position: relative;
+    height: 150px;
+    margin-bottom: 30px;
+  }
+
   .image-upload-wrap {
     margin-top: 20px;
     border: 3px dashed #64758b;
