@@ -27,7 +27,7 @@ const Home: NextPage = () => {
     e.preventDefault();
     setGeneratedBios("");
     setLoading(true);
-    const response = await fetch("https://personal-journal.vercel.app/api/generate", {
+    const response = await fetch("/api/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -224,8 +224,7 @@ const Home: NextPage = () => {
                   </div>
                   <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
                     {generatedBios
-                      .substring(generatedBios.indexOf("1") + 3)
-                      .split("2.")
+                      .split(":::::::")
                       .map((generatedBio) => {
                         return (
                           <div
