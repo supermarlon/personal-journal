@@ -27,7 +27,7 @@ const Home: NextPage = () => {
     e.preventDefault();
     setGeneratedBios("");
     setLoading(true);
-    const response = await fetch("/api/generate", {
+    const response = await fetch("https://personal-journal.vercel.app/api/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +82,6 @@ const Home: NextPage = () => {
       reader.onload = function(e) {
         let jcalData = ICAL.parse(reader.result);
         let output = ''
-        let events = []
         try {
           
         } catch(err) {
@@ -101,6 +100,7 @@ const Home: NextPage = () => {
           return true
         });
         let text = ''
+        console.log(series)
         series.forEach((element: Array<any>) => {
           let summary = '';
           let start = '';
@@ -161,6 +161,10 @@ const Home: NextPage = () => {
             />
             <p className="text-left font-medium">
               Upload your week from your calendar{" "}
+              <span className="text-slate-500">
+                (or write down your activities)
+              </span>
+              .
             </p>
           </div>
 
@@ -187,7 +191,7 @@ const Home: NextPage = () => {
             rows={4}
             className="w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black my-5"
             placeholder={
-              "e.g. Senior Developer Advocate @vercel. Tweeting about web development, AI, and React / Next.js. Writing nutlope.substack.com."
+              'e.g. \n - "TC2 - Tech Challenge - Presentation" on Thursday at Antler \n - "Idea Validation Toolkit" around 1/26/2023, 11:45:00 AM'
             }
           />
           <div className="flex mb-5 items-center space-x-3">
@@ -203,7 +207,7 @@ const Home: NextPage = () => {
               className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full"
               onClick={(e) => generateBio(e)}
             >
-              Generate your bio &rarr;
+              Generate your journal entry &rarr;
             </button>
           )}
           {loading && (
@@ -228,7 +232,7 @@ const Home: NextPage = () => {
                 <>
                   <div>
                     <h2 className="sm:text-4xl text-3xl font-bold text-slate-900 mx-auto">
-                      Your generated bios
+                      Your generated entry
                     </h2>
                   </div>
                   <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
@@ -241,7 +245,7 @@ const Home: NextPage = () => {
                             className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
                             onClick={() => {
                               navigator.clipboard.writeText(generatedBio);
-                              toast("Bio copied to clipboard", {
+                              toast("Entry copied to clipboard", {
                                 icon: "✂️",
                               });
                             }}
