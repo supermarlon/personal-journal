@@ -1,4 +1,4 @@
-# [https://www.twitterbio.com/](https://personal-journal.vercel.app/)
+# [personal-journal.vercel.app](https://personal-journal.vercel.app/)
 
 This project generates journals entries for you.
 
