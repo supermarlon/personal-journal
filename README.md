@@ -1,6 +1,6 @@
-# [personal-journal.vercel.app](https://personal-journal.vercel.app/)
+# [journal.supermarlon.de](https://journal.supermarlon.de/)
 
-This project generates journals entries for you.
+This website helps you create a journal entry about your week in just a few seconds. You first upload your week from your calendar in the form of an .ics file and the website will parse it. Then, you select how you felt that week and click the 'Generate your journal entry' button to create a journal entry. This website is powered by OpenAI and Vercel Edge Functions which work together to quickly generate a journal entry.
 
 ## How it works
 
